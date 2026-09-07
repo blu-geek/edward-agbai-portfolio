@@ -860,6 +860,45 @@ h1, h2, h3 {
   line-height: 1.8;
 }
 
+/* NyxorOS briefing intake - dark-section variant of .form-field/.contact-form
+   below (same layout rules, colors swapped for legibility on --hero-bg). */
+.nyxoros-intake-wrap { max-width: 460px; margin: 2rem auto 0; text-align: left; }
+.nyxoros-intake-form { display: flex; flex-direction: column; gap: 1rem; }
+.nyxoros-intake-form .form-field label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-sec-on-dark);
+}
+.nyxoros-intake-form .form-field input,
+.nyxoros-intake-form .form-field select {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--text-on-dark);
+  background: rgba(240,235,227,0.06);
+  border: 1px solid rgba(240,235,227,0.18);
+  border-radius: 2px;
+  padding: 0.65rem 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.nyxoros-intake-form .form-field input:focus,
+.nyxoros-intake-form .form-field select:focus { border-color: var(--accent); }
+.nyxoros-intake-form .form-submit { align-self: flex-start; min-width: 160px; }
+.nyxoros-intake-success {
+  background: rgba(181,113,31,0.12);
+  border: 1px solid rgba(181,113,31,0.3);
+  border-radius: 2px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--text-on-dark);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.nyxoros-cal-inline { width: 100%; min-height: 600px; margin-top: 1.5rem; border-radius: 4px; overflow: hidden; }
+
 /* --- Contact -------------------------------------- */
 .contact { background: var(--surface); }
 .contact-grid {
@@ -1264,7 +1303,54 @@ h1, h2, h3 {
     <p class="nyxoros-body">
       NyxorOS is an AI-powered executive operating system from Valtara AI. It consolidates your communications across ventures, surfaces what genuinely requires your attention, and handles what doesn't — so your inbox is managed, not managing you. Built for leaders who need deep work time back, not another tool to check.
     </p>
-    <a href="mailto:fo@valtara.ai?subject=NyxorOS%20%E2%80%94%20Edward%20Agbai" class="btn btn-primary">Request a NyxorOS Briefing</a>
+
+    <!-- Was a mailto: link. Now a short qualifying intake (same web3forms
+         relay + access key the contact form below already uses) that
+         reveals a live Cal.com scheduler on submit - one continuous flow,
+         no email composed by hand, no separate page. -->
+    <button type="button" class="btn btn-primary" id="nyxoros-cta-btn">Request a NyxorOS Briefing</button>
+
+    <div class="nyxoros-intake-wrap" id="nyxoros-intake-wrap" style="display:none">
+      <div class="nyxoros-intake-success" id="nyxoros-intake-success" style="display:none">
+        <p>Thank you — a member of the Nyxor team will follow up within one business day. Pick a time below if you'd like to lock in a call now.</p>
+      </div>
+      <form id="nyxoros-intake-form" class="nyxoros-intake-form" method="POST" action="https://api.web3forms.com/submit">
+        <!-- Valtara's own Web3Forms key (not Edward's - see the contact
+             form below), so a NyxorOS Briefing request reaches Valtara
+             directly rather than routing through Edward's personal inbox. -->
+        <input type="hidden" name="access_key" value="9ddc96b7-5150-454d-a01d-2cd2380b6890">
+        <input type="hidden" name="subject" value="NyxorOS Briefing Request — Edward Agbai Portfolio">
+        <input type="hidden" name="from_name" value="Edward Agbai Portfolio — NyxorOS Briefing">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="nx-name">Name</label>
+            <input type="text" id="nx-name" name="name" required>
+          </div>
+          <div class="form-field">
+            <label for="nx-email">Email</label>
+            <input type="email" id="nx-email" name="email" required>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="nx-org">Company / Organization</label>
+          <input type="text" id="nx-org" name="organization" required>
+        </div>
+        <div class="form-field">
+          <label for="nx-focus">What's driving your interest?</label>
+          <select id="nx-focus" name="focus_area" required>
+            <option value="" disabled selected>Select one</option>
+            <option value="Agent workforce">Agent workforce — a custom AI team for my role</option>
+            <option value="Morning brief">Morning brief — calendar, inbox, portfolio, news in one place</option>
+            <option value="Personal development">Personal development — curated reading/listening</option>
+            <option value="Articulation training">Articulation training — scored feedback on pitches and speeches</option>
+            <option value="Other">Other / not sure yet</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">Request Briefing</button>
+        <p class="form-error" id="nyxoros-intake-error" style="display:none">Something went wrong. Please try again or email fo@valtara.ai directly.</p>
+      </form>
+      <div id="nyxoros-cal-inline" class="nyxoros-cal-inline" style="display:none"></div>
+    </div>
   </div>
 </section>
 
@@ -1439,6 +1525,77 @@ h1, h2, h3 {
       });
     }, { threshold: 0.1 });
     animEls.forEach(function (el) { obs.observe(el); });
+  }
+})();
+</script>
+
+<!-- Cal.com embed loader (unnamespaced - this page only ever renders one
+     inline calendar, so the multi-namespace API and its data-cal-namespace
+     requirement don't apply). Renders on demand via Cal("inline", ...)
+     below, only after the intake form succeeds - never a raw link/click
+     race to get right. -->
+<script type="text/javascript">
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", { origin: "https://cal.com" });
+</script>
+
+<!-- NyxorOS briefing intake - button reveals the form; a successful
+     submit reveals a live Cal.com calendar right on the page, so a
+     briefing request ends in a booked call in one continuous flow. -->
+<script type="text/javascript">
+(function () {
+  var ctaBtn    = document.getElementById('nyxoros-cta-btn');
+  var wrap      = document.getElementById('nyxoros-intake-wrap');
+  var form      = document.getElementById('nyxoros-intake-form');
+  var successEl = document.getElementById('nyxoros-intake-success');
+  var errorEl   = document.getElementById('nyxoros-intake-error');
+  var calEl     = document.getElementById('nyxoros-cal-inline');
+  var calRendered = false;
+
+  if (ctaBtn && wrap) {
+    ctaBtn.addEventListener('click', function () {
+      wrap.style.display = 'block';
+      ctaBtn.style.display = 'none';
+      var firstField = document.getElementById('nx-name');
+      if (firstField) firstField.focus();
+    });
+  }
+
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('.form-submit');
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+      if (errorEl) errorEl.style.display = 'none';
+      try {
+        var resp = await fetch(form.action || 'https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+        if (!resp.ok) throw new Error('non-ok');
+
+        form.style.display = 'none';
+        if (successEl) successEl.style.display = 'block';
+
+        // Reveal the calendar only now - a qualified, submitted request,
+        // not a raw click - and only render it once.
+        if (calEl && !calRendered && window.Cal) {
+          calEl.style.display = 'block';
+          Cal('inline', {
+            elementOrSelector: '#nyxoros-cal-inline',
+            calLink: 'meet-fo/nyxor-os',
+            config: { layout: 'month_view' }
+          });
+          calRendered = true;
+        }
+      } catch (_) {
+        btn.textContent = 'Request Briefing';
+        btn.disabled = false;
+        if (errorEl) errorEl.style.display = 'block';
+      }
+    });
   }
 })();
 </script>
