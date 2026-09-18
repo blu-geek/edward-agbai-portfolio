@@ -897,7 +897,29 @@ h1, h2, h3 {
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
-.nyxoros-cal-inline { width: 100%; min-height: 600px; margin-top: 1.5rem; border-radius: 4px; overflow: hidden; }
+.nyxoros-intake-success .nxm-reopen { margin-top: 1rem; }
+
+/* NyxorOS booking overlay - the calendar opens in a dismissible full-screen
+   card (wide layout) instead of stretching the section. */
+.nxm-modal[hidden] { display: none; }
+.nxm-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.nxm-scrim { position: absolute; inset: 0; background: rgba(6,14,10,0.8); backdrop-filter: blur(3px); }
+.nxm-card {
+  position: relative; width: min(940px, 100%); height: min(90vh, 800px); display: grid; grid-template-rows: auto 1fr auto;
+  background: var(--hero-bg); color: var(--text-on-dark); border: 1px solid rgba(240,235,227,0.16); border-radius: 6px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+.nxm-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid rgba(240,235,227,0.12); }
+.nxm-head h3 { font-family: 'Libre Baskerville', Georgia, serif; font-size: 1.1rem; font-weight: 700; margin: 0; }
+.nxm-close { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid rgba(240,235,227,0.3); background: transparent; color: var(--text-on-dark); font-size: 1.05rem; line-height: 1; cursor: pointer; }
+.nxm-close:hover { border-color: var(--accent-hover); color: var(--accent-hover); }
+.nxm-card iframe { width: 100%; height: 100%; border: 0; display: block; background: #141210; }
+.nxm-foot { padding: 0.75rem 1.25rem; border-top: 1px solid rgba(240,235,227,0.12); }
+.nxm-back { background: none; border: none; padding: 0.4rem 0; font-family: 'Source Sans 3', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--accent-hover); cursor: pointer; }
+.nxm-back:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  .nxm-modal { padding: 0; }
+  .nxm-card { width: 100%; height: 100%; border-radius: 0; border: 0; }
+}
 
 /* --- Contact -------------------------------------- */
 .contact { background: var(--surface); }
@@ -1312,7 +1334,8 @@ h1, h2, h3 {
 
     <div class="nyxoros-intake-wrap" id="nyxoros-intake-wrap" style="display:none">
       <div class="nyxoros-intake-success" id="nyxoros-intake-success" style="display:none">
-        <p>Thank you — a member of the Nyxor team will follow up within one business day. Pick a time below if you'd like to lock in a call now.</p>
+        <p>Thank you — a member of the Nyxor team will follow up within one business day. Pick a time in the calendar if you'd like to lock in a call now.</p>
+        <button type="button" class="btn btn-primary nxm-reopen" id="nxm-reopen">Open booking calendar</button>
       </div>
       <form id="nyxoros-intake-form" class="nyxoros-intake-form" method="POST" action="https://api.web3forms.com/submit">
         <!-- Valtara's own Web3Forms key (not Edward's - see the contact
@@ -1353,7 +1376,6 @@ h1, h2, h3 {
         <button type="submit" class="btn btn-primary form-submit">Request Briefing</button>
         <p class="form-error" id="nyxoros-intake-error" style="display:none">Something went wrong. Please try again or email fo@valtara.ai directly.</p>
       </form>
-      <div id="nyxoros-cal-inline" class="nyxoros-cal-inline" style="display:none"></div>
     </div>
   </div>
 </section>
@@ -1533,19 +1555,24 @@ h1, h2, h3 {
 })();
 </script>
 
-<!-- Cal.com embed loader (unnamespaced - this page only ever renders one
-     inline calendar, so the multi-namespace API and its data-cal-namespace
-     requirement don't apply). Renders on demand via Cal("inline", ...)
-     below, only after the intake form succeeds - never a raw link/click
-     race to get right. -->
-<script type="text/javascript">
-  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-  Cal("init", { origin: "https://cal.com" });
-</script>
+<div class="nxm-modal" id="nxm-modal" role="dialog" aria-modal="true" aria-labelledby="nxm-title" hidden>
+  <div class="nxm-scrim" data-nxm-close></div>
+  <div class="nxm-card">
+    <div class="nxm-head">
+      <h3 id="nxm-title">Book your NyxorOS briefing</h3>
+      <button type="button" class="nxm-close" data-nxm-close aria-label="Close booking and return to the site">&#10005;</button>
+    </div>
+    <iframe id="nxm-frame" title="Book a NyxorOS briefing with Valtara AI"></iframe>
+    <div class="nxm-foot">
+      <button type="button" class="nxm-back" data-nxm-close>&larr; Back to Edward's site</button>
+    </div>
+  </div>
+</div>
 
 <!-- NyxorOS briefing intake - button reveals the form; a successful
-     submit reveals a live Cal.com calendar right on the page, so a
-     briefing request ends in a booked call in one continuous flow. -->
+     submit opens the Cal.com calendar in a dismissible overlay (close
+     button, back link, Esc, or click outside), so a briefing request ends
+     in a booked call without trapping the visitor. -->
 <script type="text/javascript">
 (function () {
   var ctaBtn    = document.getElementById('nyxoros-cta-btn');
@@ -1553,8 +1580,23 @@ h1, h2, h3 {
   var form      = document.getElementById('nyxoros-intake-form');
   var successEl = document.getElementById('nyxoros-intake-success');
   var errorEl   = document.getElementById('nyxoros-intake-error');
-  var calEl     = document.getElementById('nyxoros-cal-inline');
-  var calRendered = false;
+  var modal     = document.getElementById('nxm-modal');
+  var frame     = document.getElementById('nxm-frame');
+  var reopenBtn = document.getElementById('nxm-reopen');
+  var returnFocus = null;
+
+  function showModal() {
+    returnFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    var closeBtn = modal.querySelector('.nxm-close');
+    if (closeBtn) closeBtn.focus();
+  }
+  function hideModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    if (returnFocus && returnFocus.focus) returnFocus.focus();
+  }
 
   if (ctaBtn && wrap) {
     ctaBtn.addEventListener('click', function () {
@@ -1565,41 +1607,50 @@ h1, h2, h3 {
     });
   }
 
-  if (form) {
+  if (form && modal && frame) {
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
       var btn = form.querySelector('.form-submit');
+      var data = new FormData(form);
       btn.textContent = 'Sending…';
       btn.disabled = true;
       if (errorEl) errorEl.style.display = 'none';
       try {
         var resp = await fetch(form.action || 'https://api.web3forms.com/submit', {
           method: 'POST',
-          body: new FormData(form),
+          body: data,
           headers: { Accept: 'application/json' }
         });
         if (!resp.ok) throw new Error('non-ok');
-
-        form.style.display = 'none';
-        if (successEl) successEl.style.display = 'block';
-
-        // Reveal the calendar only now - a qualified, submitted request,
-        // not a raw click - and only render it once.
-        if (calEl && !calRendered && window.Cal) {
-          calEl.style.display = 'block';
-          Cal('inline', {
-            elementOrSelector: '#nyxoros-cal-inline',
-            calLink: 'meet-fo/nyxor-os',
-            config: { layout: 'month_view' }
-          });
-          calRendered = true;
-        }
       } catch (_) {
         btn.textContent = 'Request Briefing';
         btn.disabled = false;
         if (errorEl) errorEl.style.display = 'block';
+        return;
       }
+
+      form.style.display = 'none';
+      if (successEl) successEl.style.display = 'block';
+
+      // Load the calendar only now - a qualified, submitted request.
+      var notes = 'Interest: ' + data.get('focus_area') + ' | Company: ' + data.get('organization');
+      var params = new URLSearchParams({
+        embed: 'true', theme: 'dark', layout: 'month_view',
+        name: data.get('name'), email: data.get('email'), notes: notes
+      });
+      frame.src = 'https://cal.com/meet-fo/nyxor-os?' + params.toString();
+      showModal();
     });
   }
+
+  if (modal) {
+    modal.querySelectorAll('[data-nxm-close]').forEach(function (el) {
+      el.addEventListener('click', hideModal);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) hideModal();
+    });
+  }
+  if (reopenBtn) reopenBtn.addEventListener('click', showModal);
 })();
 </script>
