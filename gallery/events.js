@@ -1,7 +1,8 @@
 /* ------------------------------------------------------------------
    Events & Gallery — content
    To add an event: append an object to this array. Nothing else to edit.
-   Set featured:true to include its photos in the homepage carousel.
+   Every event's photos play in the homepage "In the Room" carousel
+   automatically; featured:true just puts that event's photos first.
    Photos are displayed uncropped, so any credit baked into an image
    stays visible. Optional per-event `credit` is shown in the viewer.
    ------------------------------------------------------------------ */

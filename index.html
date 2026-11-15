@@ -1262,7 +1262,7 @@ h1, h2, h3 {
     <div class="section-eyebrow">Events &amp; Gallery</div>
     <h2 class="section-title" id="gallery-title">In the Room</h2>
     <p class="gallery-intro">
-      Launches, keynotes, and conversations that move ideas into action. Currently featuring the Book Release Launch &mdash; three books, three perspectives, one important conversation.
+      Launches, keynotes, and conversations that move ideas into action &mdash; every event, in one continuous reel.
     </p>
     <div data-gx-featured></div>
     <div class="gx-cta">
@@ -1680,6 +1680,46 @@ h1, h2, h3 {
 })();
 </script>
 
+<script>
+/* Stat counters — count up fast each time the stats row scrolls into view */
+(function () {
+  var nums = document.querySelectorAll('.stats-row .stat-number');
+  var row = document.querySelector('.stats-row');
+  if (!nums.length || !row) return;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) return; /* leave the final numbers in place */
+
+  var DURATION = 1100; /* ms */
+  var frames = [];
+  nums.forEach(function (n, i) {
+    n.dataset.target = String(parseInt(n.textContent, 10) || 0);
+    n.style.fontVariantNumeric = 'tabular-nums';
+    frames[i] = 0;
+  });
+
+  function run(n, i) {
+    cancelAnimationFrame(frames[i]);
+    var target = +n.dataset.target, start = null;
+    function tick(t) {
+      if (start === null) start = t;
+      var p = Math.min((t - start) / DURATION, 1);
+      var eased = 1 - Math.pow(1 - p, 3); /* ease-out: fast start, soft landing */
+      n.textContent = Math.round(target * eased);
+      if (p < 1) frames[i] = requestAnimationFrame(tick);
+    }
+    frames[i] = requestAnimationFrame(tick);
+  }
+
+  new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      nums.forEach(function (n, i) {
+        if (e.isIntersecting) { run(n, i); }
+        else { cancelAnimationFrame(frames[i]); n.textContent = '0'; }
+      });
+    });
+  }, { threshold: 0.4 }).observe(row);
+})();
+</script>
 <script src="gallery/events.js"></script>
 <script src="gallery/media.js"></script>
 <script src="gallery/gallery.js"></script>

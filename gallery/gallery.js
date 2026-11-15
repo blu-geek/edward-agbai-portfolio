@@ -229,10 +229,11 @@
 
   var featuredMount = document.querySelector('[data-gx-featured]');
   if (featuredMount) {
-    var featured = EVENTS.filter(function (e) { return e.featured; });
-    if (!featured.length) featured = [EVENTS[0]];
-    createCarousel(featuredMount, slidesFor(featured), {
-      autoplay: true, interval: 5500, label: 'Featured event photos'
+    /* Every photo from every event, featured events first. */
+    var ordered = EVENTS.filter(function (e) { return e.featured; })
+      .concat(EVENTS.filter(function (e) { return !e.featured; }));
+    createCarousel(featuredMount, slidesFor(ordered), {
+      autoplay: true, interval: 5500, label: 'Photos from all events'
     });
   }
 
