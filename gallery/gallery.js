@@ -241,8 +241,11 @@
   /* ---------------------------------------------------------------
      Full-screen viewer
      --------------------------------------------------------------- */
-  var modal = null, body, title, eyebrow, backBtn, closeBtn, panel;
-  var activeCarousel = null, lastFocus = null, filter = 'All';
+  var MEDIA = window.GALLERY_MEDIA || null;
+  var modal = null, body, title, eyebrow, backBtn, closeBtn, panel, tabsEl, tabBtns = [];
+  var activeCarousel = null, lastFocus = null, filter = 'All', currentTab = 'events';
+
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || '')) ? u : ''; }
 
   function buildModal() {
     modal = el('div', 'gx-modal',
@@ -253,7 +256,11 @@
           '<div class="gx-head-text"><span class="gx-eyebrow"></span><h3 id="gx-title"></h3></div>' +
           '<button type="button" class="gx-close" aria-label="Close gallery">' + ICON.close + '</button>' +
         '</div>' +
-        '<div class="gx-body"></div>' +
+        '<div class="gx-tabs" role="tablist" aria-label="Gallery sections">' +
+          '<button type="button" class="gx-tab" role="tab" data-tab="events">Events</button>' +
+          (MEDIA ? '<button type="button" class="gx-tab" role="tab" data-tab="press">Press &amp; Media</button>' : '') +
+        '</div>' +
+        '<div class="gx-body" role="tabpanel"></div>' +
       '</div>');
     modal.hidden = true;
     document.body.appendChild(modal);
@@ -263,10 +270,21 @@
     eyebrow = modal.querySelector('.gx-eyebrow');
     backBtn = modal.querySelector('.gx-back');
     closeBtn = modal.querySelector('.gx-close');
+    tabsEl = modal.querySelector('.gx-tabs');
+    tabBtns = [].slice.call(tabsEl.querySelectorAll('.gx-tab'));
+    tabBtns.forEach(function (b, i) {
+      b.addEventListener('click', function () { setTab(b.getAttribute('data-tab')); });
+      b.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        var t = tabBtns[(i + d + tabBtns.length) % tabBtns.length];
+        t.focus(); setTab(t.getAttribute('data-tab')); e.preventDefault();
+      });
+    });
 
     closeBtn.addEventListener('click', closeModal);
     modal.querySelector('.gx-scrim').addEventListener('click', closeModal);
-    backBtn.addEventListener('click', showList);
+    backBtn.addEventListener('click', function () { setTab(currentTab); });
     modal.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { e.stopPropagation(); closeModal(); return; }
       if (e.key !== 'Tab') return;
@@ -283,9 +301,129 @@
     body.innerHTML = '';
   }
 
+  function syncTabs(show) {
+    tabsEl.hidden = !show || tabBtns.length < 2;
+    tabBtns.forEach(function (b) {
+      var on = b.getAttribute('data-tab') === currentTab;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  function setTab(t) {
+    currentTab = (t === 'press' && MEDIA) ? 'press' : 'events';
+    if (currentTab === 'press') showPress(); else showList();
+  }
+
+  function showPress() {
+    teardown();
+    currentTab = 'press';
+    backBtn.hidden = true;
+    syncTabs(true);
+    eyebrow.textContent = 'Media Kit';
+    title.textContent = 'Press & Media';
+
+    var view = el('div', 'gx-view gx-press');
+    var kit = MEDIA.kit || {};
+
+    var hero = el('div', 'gx-press-hero',
+      '<p class="gx-press-summary">' + esc(MEDIA.summary) + '</p>' +
+      '<div class="gx-press-kit"><button type="button" class="btn btn-primary gx-kit-btn">' + esc(kit.label || 'Request Press Kit') + '</button>' +
+      (kit.note ? '<span>' + esc(kit.note) + '</span>' : '') + '</div>');
+    hero.querySelector('.gx-kit-btn').addEventListener('click', function () {
+      closeModal();
+      var f = document.getElementById('f-type');
+      if (f && !f.value && kit.inquiryType) f.value = kit.inquiryType;
+      var c = document.getElementById('contact');
+      if (c) c.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+    view.appendChild(hero);
+
+    if (MEDIA.books && MEDIA.books.length) {
+      var books = el('section', 'gx-block');
+      books.appendChild(el('h4', 'gx-block-title', 'Featured Books' + (MEDIA.booksNote ? '<small>' + esc(MEDIA.booksNote) + '</small>' : '')));
+      var bg = el('div', 'gx-books');
+      MEDIA.books.forEach(function (b) {
+        bg.appendChild(el('article', 'gx-book gx-glass',
+          '<h5>' + esc(b.title) + '</h5>' +
+          (b.subtitle ? '<p class="gx-book-sub">' + esc(b.subtitle) + '</p>' : '') +
+          (b.byline ? '<p class="gx-book-by">' + esc(b.byline) + '</p>' : '')));
+      });
+      books.appendChild(bg);
+      view.appendChild(books);
+    }
+
+    var cov = el('section', 'gx-block');
+    cov.appendChild(el('h4', 'gx-block-title', 'Coverage &amp; Interviews'));
+    var items = (MEDIA.coverage || []).filter(function (c) { return safeUrl(c.url); });
+    if (items.length) {
+      var list = el('div', 'gx-cov-list');
+      items.forEach(function (c) {
+        var a = el('a', 'gx-cov gx-glass',
+          '<span class="gx-cov-type">' + esc(c.type || 'Feature') + '</span>' +
+          '<span class="gx-cov-main"><span class="gx-cov-title">' + esc(c.title) + '</span>' +
+          '<span class="gx-cov-meta">' + esc([c.outlet, c.date].filter(Boolean).join(' · ')) + '</span></span>' +
+          '<span class="gx-cov-arrow" aria-hidden="true">↗</span>');
+        a.href = safeUrl(c.url); a.target = '_blank'; a.rel = 'noopener noreferrer';
+        list.appendChild(a);
+      });
+      cov.appendChild(list);
+    } else {
+      cov.appendChild(el('div', 'gx-empty gx-glass',
+        '<strong>Coverage log opening soon.</strong>' +
+        '<span>Interviews, features, and the speaking reel will be listed here as they publish. For a current request, ask for the press kit.</span>'));
+    }
+    view.appendChild(cov);
+
+    var cols = el('div', 'gx-cols');
+
+    var app = el('section', 'gx-block');
+    app.appendChild(el('h4', 'gx-block-title', 'Appearances'));
+    var al = el('div', 'gx-app-list');
+    EVENTS.forEach(function (ev) {
+      var b = el('button', 'gx-app gx-glass',
+        '<span class="gx-app-main"><span class="gx-app-title">' + esc(ev.title) + '</span>' +
+        '<span class="gx-app-meta">' + esc([ev.category, ev.year, photoCount(ev)].filter(Boolean).join(' · ')) + '</span></span>' +
+        '<span class="gx-cov-arrow" aria-hidden="true">→</span>');
+      b.type = 'button';
+      b.addEventListener('click', function () { showEvent(ev); });
+      al.appendChild(b);
+    });
+    app.appendChild(al);
+    cols.appendChild(app);
+
+    var side = el('div', 'gx-side');
+    if (MEDIA.topics && MEDIA.topics.length) {
+      var tp = el('section', 'gx-block');
+      tp.appendChild(el('h4', 'gx-block-title', 'Topics'));
+      var chips = el('div', 'gx-chips');
+      MEDIA.topics.forEach(function (t) { chips.appendChild(el('span', 'gx-topic', esc(t))); });
+      tp.appendChild(chips);
+      side.appendChild(tp);
+    }
+    if (MEDIA.organizations && MEDIA.organizations.length) {
+      var og = el('section', 'gx-block');
+      og.appendChild(el('h4', 'gx-block-title', 'Organizations'));
+      var ol = el('ul', 'gx-orgs');
+      MEDIA.organizations.forEach(function (o) {
+        ol.appendChild(el('li', '', '<strong>' + esc(o.name) + '</strong><span>' + esc(o.role) + '</span>'));
+      });
+      og.appendChild(ol);
+      side.appendChild(og);
+    }
+    cols.appendChild(side);
+    view.appendChild(cols);
+
+    body.appendChild(view);
+    body.scrollTop = 0;
+  }
+
   function showList() {
     teardown();
+    currentTab = 'events';
     backBtn.hidden = true;
+    syncTabs(true);
     eyebrow.textContent = 'Events & Gallery';
     title.textContent = 'Moments from the Room';
 
@@ -332,7 +470,9 @@
 
   function showEvent(ev) {
     teardown();
-    backBtn.hidden = EVENTS.length < 2;
+    syncTabs(false);
+    backBtn.hidden = false;
+    backBtn.lastChild.textContent = currentTab === 'press' ? 'Press & Media' : 'All events';
     eyebrow.textContent = ev.category;
     title.textContent = ev.title;
 
@@ -352,16 +492,16 @@
     });
   }
 
-  function openModal(eventId) {
+  function openModal(eventId, tab) {
     if (!modal) buildModal();
     lastFocus = document.activeElement;
     modal.hidden = false;
     document.documentElement.classList.add('gx-lock');
     var ev = null;
     EVENTS.forEach(function (e) { if (e.id === eventId) ev = e; });
+    currentTab = (tab === 'press' && MEDIA) ? 'press' : 'events';
     if (ev) showEvent(ev);
-    else if (EVENTS.length === 1) showEvent(EVENTS[0]);
-    else showList();
+    else setTab(currentTab);
     closeBtn.focus();
   }
 
@@ -374,6 +514,6 @@
   }
 
   document.querySelectorAll('[data-gx-open]').forEach(function (b) {
-    b.addEventListener('click', function () { openModal(b.getAttribute('data-gx-event')); });
+    b.addEventListener('click', function () { openModal(b.getAttribute('data-gx-event'), b.getAttribute('data-gx-tab')); });
   });
 })();

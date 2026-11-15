@@ -1269,7 +1269,8 @@ h1, h2, h3 {
       <button type="button" class="btn btn-primary gx-open" data-gx-open>
         Explore All Events <span class="gx-open-count" data-gx-count aria-hidden="true"></span>
       </button>
-      <span class="gx-cta-note">Browse every event, then open the full photo gallery.</span>
+      <button type="button" class="btn gx-open gx-ghost" data-gx-open data-gx-tab="press">Press &amp; Media</button>
+      <span class="gx-cta-note">Every event, plus the media kit, books, and coverage.</span>
     </div>
   </div>
 </section>
@@ -1333,7 +1334,10 @@ h1, h2, h3 {
       <p class="press-kit-text">
         For interviews, editorial contributions, and feature requests, a full press kit including biography, high-resolution photography, and speaking reel is available on request.
       </p>
-      <a href="#contact" class="btn btn-outline">Request Press Kit</a>
+      <div class="press-kit-actions">
+        <a href="#contact" class="btn btn-outline">Request Press Kit</a>
+        <button type="button" class="btn btn-primary gx-open" data-gx-open data-gx-tab="press">Open Press &amp; Media</button>
+      </div>
     </div>
   </div>
 </section>
@@ -1677,4 +1681,5 @@ h1, h2, h3 {
 </script>
 
 <script src="gallery/events.js"></script>
+<script src="gallery/media.js"></script>
 <script src="gallery/gallery.js"></script>
