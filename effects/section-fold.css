@@ -1,0 +1,23 @@
+/* ==================================================================
+   Section Fold — scroll-driven paper-fold effect between sections
+   Behaviour lives in effects/section-fold.js (tunable settings at the top).
+   Everything here only applies once the script adds .fold-ready, so the
+   page is unchanged if JS is off or the visitor prefers reduced motion.
+   ================================================================== */
+.fold-ready .fold-section {
+  position: relative;
+  transform-origin: 50% 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.fold-ready .fold-section.is-folding { will-change: transform; }
+
+/* Dimming layer — darkens a section as it folds away from the viewer */
+.fold-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #040a06;
+  opacity: 0;
+  pointer-events: none;
+}
