@@ -1,0 +1,43 @@
+/* ==================================================================
+   Section Stack — sections pin in place while the next one slides over
+   Behaviour lives in effects/section-stack.js (tunable settings at the top).
+   Everything here only applies once the script adds .stack-ready, so the
+   page is unchanged if JS is off or the visitor prefers reduced motion.
+   ================================================================== */
+.stack-ready .stack-section {
+  position: sticky;
+  top: 0;                      /* JS sets the exact value per section */
+  z-index: var(--stack-z, 1);  /* later sections always cover earlier ones */
+  transform-origin: 50% 50%;
+}
+.stack-ready .stack-section.is-covered { will-change: transform; }
+
+/* Rounded top edge on every section that slides over another */
+.stack-ready .stack-section.stack-round {
+  clip-path: inset(0 round var(--stack-radius, 24px) var(--stack-radius, 24px) 0 0);
+}
+
+/* Dimming layer — darkens a section as the next one covers it */
+.stack-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #040a06;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Zero-height marker at each section's natural position (used for anchor links) */
+.stack-anchor {
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  pointer-events: none;
+}
+
+/* Footer must sit above any section that is still pinned behind it */
+.stack-ready .stack-footer {
+  position: relative;
+  z-index: var(--stack-z, 20);
+}
