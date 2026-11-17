@@ -1,0 +1,221 @@
+/* Authorship & Publishing section — uses the site tokens from index.html :root. */
+
+.authorship { background: var(--surface-2); }
+.authorship-lede {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 62ch;
+  margin: 0.75rem 0 2.25rem;
+  line-height: 1.7;
+}
+
+/* 4-step journey */
+.authorship-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2.75rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  counter-reset: step;
+}
+.authorship-steps li {
+  border-top: 2px solid var(--accent);
+  padding-top: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.authorship-steps strong {
+  display: block;
+  font-family: 'Libre Baskerville', serif;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Tier cards */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+.tier-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.tier-card h3 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+.tier-fee {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+}
+.tier-fee small { font-size: 0.8rem; color: var(--text-secondary); font-weight: 400; }
+.tier-card p.tier-note {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+.tier-card--highlight { border-color: var(--accent); }
+
+.authorship-ethics {
+  border-left: 3px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1.1rem;
+  margin: 0 0 2.5rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  max-width: 70ch;
+}
+.authorship-ethics strong { color: var(--text-primary); }
+
+.authorship-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+/* Intake form */
+.authorship-form-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  scroll-margin-top: 90px;
+}
+.authorship-form-wrap h3 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.35rem;
+  color: var(--text-primary);
+  margin: 0 0 0.4rem;
+}
+.authorship-form-wrap > p.form-intro {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+.authorship-form { display: flex; flex-direction: column; gap: 1rem; }
+.authorship-form select,
+.authorship-form input[type="number"],
+.authorship-form input[type="text"] {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.65rem 0.9rem;
+  outline: none;
+  width: 100%;
+}
+.authorship-form select:focus,
+.authorship-form input:focus,
+.authorship-form textarea:focus { border-color: var(--accent); }
+.authorship-form textarea {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.65rem 0.9rem;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+}
+.check-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.check-row input { margin-top: 0.25rem; accent-color: var(--accent); }
+.hidden-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Dropzone */
+.dropzone {
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.dropzone:hover, .dropzone:focus-within, .dropzone.is-over { border-color: var(--accent); }
+.dropzone input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.dropzone-file { margin-top: 0.5rem; color: var(--text-primary); font-weight: 600; }
+.dropzone-help { font-size: 0.8rem; margin-top: 0.35rem; }
+
+.field-error { font-size: 0.85rem; color: #c0392b; min-height: 0; }
+
+/* Scope preview card */
+.scope-card {
+  margin-top: 0.5rem;
+  border-top: 2px solid var(--accent);
+  padding-top: 1.25rem;
+}
+.scope-card h4 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem;
+}
+.scope-card table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin-bottom: 1rem; }
+.scope-card th, .scope-card td {
+  text-align: left;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.scope-card td.num, .scope-card th.num { text-align: right; white-space: nowrap; }
+.scope-card .total-row td { color: var(--text-primary); font-weight: 700; }
+.scope-card ul { margin: 0.5rem 0 1rem 1.1rem; color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; }
+.scope-card .scope-disclaimer { font-size: 0.85rem; color: var(--text-secondary); font-style: italic; line-height: 1.6; }
+.scope-card .scope-custom { color: var(--text-primary); font-weight: 600; }
+
+.form-success-block {
+  background: rgba(181,113,31,0.08);
+  border: 1px solid rgba(181,113,31,0.22);
+  border-radius: 2px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--accent);
+  line-height: 1.6;
+}
+
+@media (max-width: 1024px) {
+  .tier-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .authorship-steps { grid-template-columns: repeat(2, 1fr); }
+  .authorship-form .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .tier-grid { grid-template-columns: 1fr; }
+  .authorship-steps { grid-template-columns: 1fr; }
+  .authorship-form-wrap { padding: 1.1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dropzone { transition: none; }
+}

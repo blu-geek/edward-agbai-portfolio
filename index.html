@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="gallery/gallery.css">
 <link rel="stylesheet" href="effects/section-stack.css">
+<link rel="stylesheet" href="authorship/authorship.css">
 
 <style>
 /* ===================================================
@@ -1085,6 +1086,7 @@ h1, h2, h3 {
     <li><a href="#writing">Writing</a></li>
     <li><a href="#speaking">Speaking</a></li>
     <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#authorship">Publishing</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <a href="#contact" class="nav-cta">Get in Touch</a>
@@ -1339,6 +1341,170 @@ h1, h2, h3 {
         <a href="#contact" class="btn btn-outline">Request Press Kit</a>
         <button type="button" class="btn btn-primary gx-open" data-gx-open data-gx-tab="press">Open Press &amp; Media</button>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHORSHIP & PUBLISHING — Phase 1 (Web3Forms-only). Config: authorship/config.js -->
+<section class="section authorship" id="authorship" aria-labelledby="authorship-title">
+  <div class="container">
+    <div class="section-eyebrow">Authorship &amp; Publishing</div>
+    <h2 class="section-title" id="authorship-title">From your ideas to a published book</h2>
+    <p class="authorship-lede">
+      A bookable authorship service, led by an author who has published. Book a free discovery call, choose a package, and move through a fixed process: plan, write or review, publish, and launch.
+    </p>
+
+    <ol class="authorship-steps" aria-label="Process">
+      <li><strong>1. Plan</strong>Scope the book on a discovery call.</li>
+      <li><strong>2. Write or review</strong>Outline, drafts from interviews, revision rounds.</li>
+      <li><strong>3. Publish</strong>ISBN, typesetting, cover, distribution.</li>
+      <li><strong>4. Launch</strong>A launch plan and post-launch articles.</li>
+    </ol>
+
+    <div class="tier-grid">
+      <article class="tier-card">
+        <h3>Discovery call</h3>
+        <p class="tier-fee">$150 <small>CAD</small></p>
+        <p class="tier-note">30-minute call to scope the book. Credited to any package you book.</p>
+      </article>
+      <article class="tier-card">
+        <h3>Manuscript review</h3>
+        <p class="tier-fee">$1,500 <small>CAD</small></p>
+        <p class="tier-note">Structural and line-edit notes on up to 60,000 words. Two revision rounds.</p>
+      </article>
+      <article class="tier-card tier-card--highlight">
+        <h3>Co-writing partnership</h3>
+        <p class="tier-fee">$7,500 <small>CAD</small></p>
+        <p class="tier-note">Outline, chapter drafts from interviews, three revision rounds.</p>
+      </article>
+      <article class="tier-card">
+        <h3>Full publishing package</h3>
+        <p class="tier-fee">$12,000 <small>CAD</small></p>
+        <p class="tier-note">Co-writing plus ISBN setup, typesetting, cover coordination, e-book and print distribution setup, and a launch plan.</p>
+      </article>
+    </div>
+    <p class="tier-note" style="margin:-1.5rem 0 2.5rem;font-size:0.9rem;color:var(--text-secondary)">
+      Add-on: thought-leadership articles at $800 CAD per piece. All fees exclude tax.
+    </p>
+
+    <div class="authorship-ethics">
+      <p><strong>Disclosure and ethics.</strong> Every engagement has a written disclosure agreement and a conflict-of-interest check. Clients who hold public office are reviewed before any work begins. Content that promotes violence, discrimination or disinformation is declined. No payment is taken until your package is confirmed.</p>
+    </div>
+
+    <div class="authorship-ctas">
+      <a href="https://cal.com/edward-agbai-hfy8zm/secret" class="btn btn-primary" target="_blank" rel="noopener">Book a Discovery Call</a>
+      <a href="#authorship-intake" class="btn btn-outline">Submit a Brief or Manuscript</a>
+    </div>
+
+    <div class="authorship-form-wrap" id="authorship-intake">
+      <div class="form-success-block" id="authorship-success" style="display:none">
+        <p>Thank you. Edward's team will review your brief and reply within 2 business days with next steps.</p>
+      </div>
+      <div id="authorship-scope"></div>
+
+      <h3>Submit your brief</h3>
+      <p class="form-intro">Tell us about the book and the stage you are at. This gives us what we need to suggest a package. It is an indicative estimate, and Edward confirms it before any invoice.</p>
+
+      <form id="authorship-form" class="authorship-form" method="POST" action="https://api.web3forms.com/submit">
+        <input type="hidden" name="access_key" value="81758e82-8fa7-4359-9710-9ff0bb4c74ba">
+        <input type="hidden" name="subject" value="Authorship &amp; Publishing Inquiry — Edward Agbai">
+        <input type="hidden" name="from_name" value="Edward Agbai Portfolio — Authorship &amp; Publishing">
+
+        <!-- Honeypot: hidden from people, bots tend to fill it. -->
+        <div class="hidden-field" aria-hidden="true">
+          <label for="a-website">Leave this field empty</label>
+          <input type="text" id="a-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="a-name">Name</label>
+            <input type="text" id="a-name" name="name" required>
+          </div>
+          <div class="form-field">
+            <label for="a-email">Email</label>
+            <input type="email" id="a-email" name="email" required>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="a-org">Organization or role (optional)</label>
+          <input type="text" id="a-org" name="organization">
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="a-interest">Service interest</label>
+            <select id="a-interest" name="service_interest" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="manuscript_review">Manuscript review</option>
+              <option value="co_writing">Co-writing partnership</option>
+              <option value="full_publishing">Full publishing package</option>
+              <option value="articles">Thought-leadership articles</option>
+              <option value="unsure">Not sure yet</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="a-stage">Project stage</label>
+            <select id="a-stage" name="project_stage" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="idea">Idea</option>
+              <option value="outline">Outline</option>
+              <option value="partial">Partial draft</option>
+              <option value="complete">Complete manuscript</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field" id="a-articles-row" style="display:none">
+          <label for="a-article-count">Number of articles</label>
+          <input type="number" id="a-article-count" name="article_count" min="1" max="50" value="1">
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="a-genre">Genre or topic (optional)</label>
+            <input type="text" id="a-genre" name="genre_topic">
+          </div>
+          <div class="form-field">
+            <label for="a-words">Approximate word count (optional)</label>
+            <input type="number" id="a-words" name="approx_word_count" min="0" step="1000">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="a-window">Target launch window (optional)</label>
+          <input type="text" id="a-window" name="target_launch_window" placeholder="e.g. Spring 2027">
+        </div>
+
+        <div class="form-field">
+          <label>Brief or manuscript (optional)</label>
+          <div class="dropzone" id="a-dropzone">
+            <label for="a-file" style="cursor:pointer">Choose a file or drop it here</label>
+            <input type="file" id="a-file" accept=".pdf,.doc,.docx,.rtf,.txt,.odt">
+            <div class="dropzone-file" id="a-file-name"></div>
+            <div class="dropzone-help">PDF, DOC, DOCX, RTF, TXT or ODT, up to 25 MB. Edward will request the file through a secure link after you submit.</div>
+          </div>
+          <p class="field-error" id="a-file-error" style="display:none" role="alert"></p>
+        </div>
+
+        <div class="form-field">
+          <label for="a-msg">Message</label>
+          <textarea id="a-msg" name="message" rows="5" placeholder="What is the book about, who is it for, and what would success look like?"></textarea>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" name="public_office" value="Yes">
+          <span>I currently hold a public office or government role. I understand a disclosure agreement and conflict-of-interest check are required before any work begins.</span>
+        </label>
+
+        <label class="check-row">
+          <input type="checkbox" name="consent" value="Yes" required>
+          <span>I agree that Edward Agbai's team may contact me about this inquiry, and that the details I share are used only to respond to it.</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary form-submit">Submit Brief</button>
+        <p class="form-error" id="authorship-error" style="display:none" role="alert">Something went wrong. Please try again, or email Edward directly.</p>
+      </form>
     </div>
   </div>
 </section>
@@ -1725,3 +1891,6 @@ h1, h2, h3 {
 <script src="gallery/media.js"></script>
 <script src="gallery/gallery.js"></script>
 <script src="effects/section-stack.js"></script>
+<script src="authorship/config.js"></script>
+<script src="authorship/scope.js"></script>
+<script src="authorship/authorship.js"></script>
