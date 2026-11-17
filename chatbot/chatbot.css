@@ -1,0 +1,166 @@
+/* Chat widget — appended to <body>, above the section stack (z 900), below modals (nxm 1000, gallery 1200). */
+
+.cb-launcher {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.15rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 6px 22px rgba(26, 20, 16, 0.28);
+  transition: background 0.2s, transform 0.2s;
+}
+.cb-launcher:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.cb-launcher:focus-visible, .cb-opt:focus-visible, .cb-close:focus-visible, .cb-send:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.cb-launcher svg { width: 1.15rem; height: 1.15rem; flex: none; }
+
+.cb-panel {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 5rem;
+  z-index: 900;
+  width: min(380px, calc(100vw - 2rem));
+  max-height: min(580px, calc(100vh - 7rem));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  /* solid fallback first, then glass where supported */
+  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 18px 50px rgba(26, 20, 16, 0.32);
+  color: var(--text-primary);
+  font-family: 'Source Sans 3', sans-serif;
+}
+.cb-panel[hidden] { display: none; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cb-panel { background: var(--surface); }
+}
+
+.cb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.cb-title { font-family: 'Libre Baskerville', serif; font-size: 1rem; margin: 0; }
+.cb-sub { display: block; font-family: 'Source Sans 3', sans-serif; font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem; }
+.cb-close {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.cb-close:hover { color: var(--text-primary); }
+
+.cb-log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 140px;
+}
+.cb-msg {
+  max-width: 88%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.cb-msg--bot { align-self: flex-start; background: var(--surface-2); color: var(--text-primary); }
+.cb-msg--user { align-self: flex-end; background: var(--accent); color: #fff; }
+
+.cb-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0 1rem 0.9rem;
+}
+.cb-options:empty { display: none; }
+.cb-opt {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.cb-opt:hover { background: var(--accent); color: #fff; }
+
+.cb-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+.cb-form[hidden] { display: none; }
+.cb-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem; /* 16px avoids iOS zoom on focus */
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.55rem 0.75rem;
+  outline: none;
+}
+.cb-input:focus { border-color: var(--accent); }
+.cb-send {
+  border: 0;
+  border-radius: 2px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+.cb-send:hover { background: var(--accent-hover); }
+.cb-send:disabled { opacity: 0.6; cursor: default; }
+
+.cb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 560px) {
+  .cb-launcher { right: 0.9rem; bottom: 0.9rem; }
+  .cb-panel { right: 0.75rem; left: 0.75rem; width: auto; bottom: 4.6rem; max-height: calc(100vh - 6rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cb-launcher, .cb-opt { transition: none; }
+  .cb-launcher:hover { transform: none; }
+}
+@media print {
+  .cb-launcher, .cb-panel { display: none !important; }
+}
